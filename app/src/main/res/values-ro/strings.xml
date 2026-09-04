@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">GAMA Core</string>
+    <string name="widget_description">Schimbă rapid între redarea Vulkan și OpenGL de pe ecranul principal.</string>
+    <string name="tile_label">GAMA Core · Redare</string>
+</resources>

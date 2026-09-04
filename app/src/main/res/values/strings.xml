@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">GAMA Core</string>
+    <string name="widget_description">Quick-switch between Vulkan and OpenGL renderers from your home screen.</string>
+    <string name="tile_label">GAMA Core · Renderer</string>
+</resources>
