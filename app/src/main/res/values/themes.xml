@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.GAMA" parent="Theme.Material3.DayNight.NoActionBar">
+    <!-- Plain platform theme: Compose Material 3 draws everything, so the
+         Material Components library is not needed. DayNight follows the system. -->
+    <style name="Theme.GAMA" parent="android:Theme.DeviceDefault.DayNight">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionModeOverlay">true</item>
+        <!-- Dark status/navigation bar icons on the light theme; values-night flips them. -->
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
     </style>
 </resources>

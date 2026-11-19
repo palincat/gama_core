@@ -1,0 +1,4 @@
+- First GAMA Core release: Vulkan/OpenGL switching with read-back, root or Shizuku backend, reboot restore, Quick Settings tile, widget, Tasker and backup/restore.
+- Own application ID (com.popovicialinc.gama.core), so it installs next to the full GAMA.
+- Root is only requested when you tap Refresh or switch renderer, never at launch.
+- Added a Grant Shizuku access button and automatic status refresh when you return to the app.

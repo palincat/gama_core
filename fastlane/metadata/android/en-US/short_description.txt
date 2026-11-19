@@ -1,1 +1,1 @@
-A specialized utility to manage and switch GPU rendering APIs via Shizuku
+Bare-bones Vulkan / OpenGL renderer switcher for low-end devices

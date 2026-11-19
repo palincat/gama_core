@@ -14,11 +14,24 @@ class RendererController(private val context: Context) {
     private val mutableState = MutableStateFlow(RendererUiState(desired = RendererState.getDesiredRenderer(prefs)))
     val state: StateFlow<RendererUiState> = mutableState.asStateFlow()
 
-    suspend fun refresh() {
+    /**
+     * Re-reads backend availability and the active renderer.
+     *
+     * [probeRoot] runs `su`, which Magisk/KernelSU may answer with an approval
+     * prompt, so it is true only for an explicit user action (the Refresh button).
+     * Passive refreshes (launch, returning to the app) reuse the last known root
+     * state instead of surprising the user with a prompt.
+     */
+    suspend fun refresh(probeRoot: Boolean = false) {
         RendererState.reconcileRebootReset(prefs)
-        val root = ShizukuHelper.refreshRootAvailability()
+        val root = if (probeRoot) ShizukuHelper.refreshRootAvailability() else ShizukuHelper.isRootAvailable()
         val shizuku = ShizukuHelper.checkBinder() && ShizukuHelper.checkPermission()
-        val backend = when { root -> "Root available"; shizuku -> "Shizuku available"; ShizukuHelper.checkBinder() -> "Shizuku permission required"; else -> "No privileged backend available" }
+        val backend = when {
+            root -> "Root available"
+            shizuku -> "Shizuku available"
+            ShizukuHelper.checkBinder() -> "Shizuku permission required"
+            else -> "No Shizuku or root access yet. Start Shizuku, or tap Refresh to check for root."
+        }
         val actual = if (root || shizuku) ShizukuHelper.getCurrentRenderer() else RendererState.getRenderer(prefs)
         if (actual in setOf(RendererState.RENDERER_VULKAN, RendererState.RENDERER_OPENGL)) RendererState.recordObservedRenderer(prefs, actual)
         mutableState.value = mutableState.value.copy(actual = actual, desired = RendererState.getDesiredRenderer(prefs), backend = backend, inProgress = false)

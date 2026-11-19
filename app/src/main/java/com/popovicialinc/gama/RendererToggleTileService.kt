@@ -11,17 +11,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
-// ── Tile localization helper ──────────────────────────────────────────────────
-private fun android.content.Context.tileStr(section: String, key: String, fallback: String): String {
-    return try {
-        val prefs = getSharedPreferences("gama_prefs", android.content.Context.MODE_PRIVATE)
-        val code = prefs.getString("selected_language", "en") ?: "en"
-        if (code == "en") return fallback
-        val raw = assets.open("translations/$code.json").bufferedReader().readText()
-        org.json.JSONObject(raw).optJSONObject(section)?.optString(key)?.takeIf { it.isNotEmpty() } ?: fallback
-    } catch (_: Exception) { fallback }
-}
-
 /**
  * Single Quick Settings tile that switches between the two renderers —
  * replaces the old separate Vulkan and OpenGL tiles.
@@ -56,11 +45,11 @@ class RendererToggleTileService : TileService() {
         scope.launch {
             RendererOperationLock.run {
             if (!ShizukuHelper.isBackendReady() && !ShizukuHelper.refreshRootAvailability()) {
-                setTile(Tile.STATE_INACTIVE, applicationContext.tileStr("tile", "state_shizuku_not_running", "Shizuku isn't running"))
+                setTile(Tile.STATE_INACTIVE, getString(R.string.tile_no_backend))
                 return@run
             }
 
-            setTile(Tile.STATE_ACTIVE, applicationContext.tileStr("tile", "state_switching", "Switching…"))
+            setTile(Tile.STATE_ACTIVE, getString(R.string.tile_switching))
 
             try {
                 val applied = if (targetVulkan) {
@@ -89,11 +78,11 @@ class RendererToggleTileService : TileService() {
                 } else {
                     setTile(
                         Tile.STATE_INACTIVE,
-                        applicationContext.tileStr("tile", "state_failed", "Failed — tap to retry")
+                        getString(R.string.tile_failed)
                     )
                 }
             } catch (_: Exception) {
-                setTile(Tile.STATE_INACTIVE, applicationContext.tileStr("tile", "state_failed", "Failed — tap to retry"))
+                setTile(Tile.STATE_INACTIVE, getString(R.string.tile_failed))
             }
             }
         }
@@ -101,7 +90,7 @@ class RendererToggleTileService : TileService() {
 
     private fun setTile(state: Int, subtitle: String?) {
         val tile = qsTile ?: return
-        tile.label = applicationContext.tileStr("tile", "label", "GAMA · Renderer")
+        tile.label = getString(R.string.tile_label)
         tile.state = state
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             tile.subtitle = subtitle ?: currentRendererSubtitle()
@@ -114,9 +103,9 @@ class RendererToggleTileService : TileService() {
         RendererState.reconcileRebootReset(prefs)
         val renderer = RendererState.getRenderer(prefs)
         return if (renderer == RendererState.RENDERER_VULKAN) {
-            applicationContext.tileStr("tile", "state_vulkan", "Vulkan · tap for OpenGL")
+            getString(R.string.tile_state_vulkan)
         } else {
-            applicationContext.tileStr("tile", "state_opengl", "OpenGL · tap for Vulkan")
+            getString(R.string.tile_state_opengl)
         }
     }
 

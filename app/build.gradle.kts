@@ -67,7 +67,9 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.popovicialinc.gama"
+        // Distinct from the full GAMA app (com.popovicialinc.gama) so both can be
+        // installed side by side and Core never overwrites or collides with it.
+        applicationId = "com.popovicialinc.gama.core"
         minSdk = 29
         targetSdk = 36
         versionCode = 14
@@ -150,9 +152,6 @@ dependencies {
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-
-    // Other
-    implementation("com.google.android.material:material:1.11.0")
 
     // Glance (home screen widget)
     implementation("androidx.glance:glance-appwidget:1.1.1")

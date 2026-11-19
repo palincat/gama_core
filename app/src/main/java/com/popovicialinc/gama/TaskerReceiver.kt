@@ -12,9 +12,9 @@ import androidx.work.workDataOf
 /**
  * Tasker entry point. Configure Tasker's Send Intent action with:
  *
- * Package: com.popovicialinc.gama
+ * Package: com.popovicialinc.gama.core
  * Class: com.popovicialinc.gama.TaskerReceiver
- * Action: com.popovicialinc.gama.ACTION_SET_RENDERER
+ * Action: com.popovicialinc.gama.core.ACTION_SET_RENDERER
  * Target: Broadcast Receiver
  * Extras: renderer:vulkan (or opengl), token:<GAMA Tasker token>
  *         aggressive:true (optional)
@@ -22,7 +22,7 @@ import androidx.work.workDataOf
 class TaskerReceiver : BroadcastReceiver() {
 
     companion object {
-        const val ACTION_SET_RENDERER = "com.popovicialinc.gama.ACTION_SET_RENDERER"
+        const val ACTION_SET_RENDERER = "com.popovicialinc.gama.core.ACTION_SET_RENDERER"
         const val EXTRA_RENDERER = "renderer"
         const val EXTRA_AGGRESSIVE = "aggressive"
         const val EXTRA_TOKEN = "token"

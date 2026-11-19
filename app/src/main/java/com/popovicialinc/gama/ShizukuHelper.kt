@@ -337,7 +337,8 @@ object ShizukuHelper {
         "com.google.android.permissioncontroller",
         "moe.shizuku.privileged.api",
         "rikka.shizuku",
-        "com.popovicialinc.gama"
+        "com.popovicialinc.gama",
+        "com.popovicialinc.gama.core"
     )
 
     // ── Renderer switch: shared implementation ────────────────────────────────

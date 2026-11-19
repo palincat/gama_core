@@ -42,6 +42,7 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -52,6 +53,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import kotlinx.coroutines.launch
 import rikka.shizuku.Shizuku
 
@@ -100,7 +103,17 @@ private fun GamaCoreApp() {
     val scope = androidx.compose.runtime.rememberCoroutineScope()
     var screen by remember { mutableStateOf(Screen.MAIN) }
     BackHandler(screen != Screen.MAIN) { screen = Screen.MAIN }
-    LaunchedEffect(Unit) { controller.refresh() }
+    // Passive refresh on every return to the app (also covers coming back from
+    // the Shizuku permission dialog). Never probes root; see RendererController.
+    val lifecycle = (context as? ComponentActivity)?.lifecycle
+    DisposableEffect(lifecycle) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) scope.launch { controller.refresh() }
+        }
+        lifecycle?.addObserver(observer)
+        onDispose { lifecycle?.removeObserver(observer) }
+    }
+    if (lifecycle == null) LaunchedEffect(Unit) { controller.refresh() }
 
     Scaffold(
         topBar = {
@@ -114,7 +127,7 @@ private fun GamaCoreApp() {
             Screen.MAIN -> MainScreen(padding, state,
                 onVulkan = { scope.launch { controller.switchTo(RendererState.RENDERER_VULKAN) } },
                 onOpenGl = { scope.launch { controller.switchTo(RendererState.RENDERER_OPENGL) } },
-                onRefresh = { scope.launch { controller.refresh() } },
+                onRefresh = { scope.launch { controller.refresh(probeRoot = true) } },
                 onNavigate = { screen = it }
             )
             Screen.OPTIONS -> OptionsScreen(padding)
@@ -150,7 +163,7 @@ private fun MainScreen(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         item {
-            Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)) {
+            Card(modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)) {
                 Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text("Current renderer", style = MaterialTheme.typography.labelLarge)
                     Text(state.actual, style = MaterialTheme.typography.headlineMedium)
@@ -185,7 +198,7 @@ private fun MainScreen(
 @Composable
 private fun StatusLine(message: String?, detail: String?) {
     if (message == null) return
-    Surface(color = MaterialTheme.colorScheme.surfaceVariant, shape = MaterialTheme.shapes.medium) {
+    Surface(modifier = Modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.surfaceVariant, shape = MaterialTheme.shapes.medium) {
         Column(Modifier.padding(horizontal = 16.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(message, style = MaterialTheme.typography.bodyMedium)
             detail?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
@@ -268,7 +281,7 @@ private fun SettingsScreen(padding: PaddingValues) {
             OutlinedButton({ openDocument.launch(arrayOf("application/json")) }) { Text("Restore") }
         }
         restoreResult?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
-        Text("Theme and language follow Android automatically.", style = MaterialTheme.typography.bodyMedium)
+        Text("Light, dark and dynamic colors follow Android automatically.", style = MaterialTheme.typography.bodyMedium)
     }
 }
 

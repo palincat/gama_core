@@ -2,4 +2,9 @@
     <string name="app_name">GAMA Core</string>
     <string name="widget_description">Quick-switch between Vulkan and OpenGL renderers from your home screen.</string>
     <string name="tile_label">GAMA Core · Renderer</string>
+    <string name="tile_no_backend">No Root or Shizuku access</string>
+    <string name="tile_switching">Switching…</string>
+    <string name="tile_failed">Failed — tap to retry</string>
+    <string name="tile_state_vulkan">Vulkan · tap for OpenGL</string>
+    <string name="tile_state_opengl">OpenGL · tap for Vulkan</string>
 </resources>

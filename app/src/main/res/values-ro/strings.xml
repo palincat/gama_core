@@ -2,4 +2,9 @@
     <string name="app_name">GAMA Core</string>
     <string name="widget_description">Schimbă rapid între redarea Vulkan și OpenGL de pe ecranul principal.</string>
     <string name="tile_label">GAMA Core · Redare</string>
+    <string name="tile_no_backend">Fără acces Root sau Shizuku</string>
+    <string name="tile_switching">Se schimbă…</string>
+    <string name="tile_failed">Eșuat — atinge pentru a reîncerca</string>
+    <string name="tile_state_vulkan">Vulkan · atinge pentru OpenGL</string>
+    <string name="tile_state_opengl">OpenGL · atinge pentru Vulkan</string>
 </resources>
